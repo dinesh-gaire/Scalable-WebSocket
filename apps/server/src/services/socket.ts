@@ -1,4 +1,19 @@
+import Redis from 'ioredis';
 import {Server} from 'socket.io'
+
+const pub = new Redis({
+    host: "localhost",
+    port: 6379,
+    username: "default",
+    password: "",
+  });
+  
+  const sub = new Redis({
+    host: "localhost",
+    port: 6379,
+    username: "default",
+    password: "",
+  });
 
 class SocketService {
     private _io: Server;
@@ -11,19 +26,29 @@ class SocketService {
                 origin: "*",
             }
         });
+        sub.subscribe("MESSAGES");
     }
 
     public initListeners(){
         const io = this.io;
         console.log('Init Socket Listeners...')
         
-        io.on("connect", (socket)=>{
+        io.on("connect", (socket) => {
             console.log(`New Socket Connected`, socket.id);
-            socket.on("event:message", async({message}: {message: string})=>{
-                console.log("New Message Rec.", message);
-                
-            })
-        })
+            socket.on("event:message", async ({ message }: { message: string }) => {
+              console.log("New Message Rec.", message);
+              // publish this message to redis
+              await pub.publish("MESSAGES", JSON.stringify({ message }));
+            });
+        });
+          
+        sub.on("message", async (channel, message) => {
+            if (channel === "MESSAGES") {
+              console.log("new message from redis", message);
+              io.emit("message", message);
+            }
+        });
+          
     }
 
     get io(){
