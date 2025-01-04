@@ -1,7 +1,9 @@
 import http from 'http';
 import SocketService from './services/socket';
+import { startMessageConsumer } from './services/kafka';
 
-async function init(){
+async function init() {
+    startMessageConsumer();
     const socketService = new SocketService();
 
     const httpServer = http.createServer();
@@ -9,7 +11,7 @@ async function init(){
 
     socketService.io.attach(httpServer)
 
-    httpServer.listen(PORT, ()=>{
+    httpServer.listen(PORT, () => {
         console.log(`Http server listened at port ${PORT}`);
     })
 
