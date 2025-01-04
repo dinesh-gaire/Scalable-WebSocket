@@ -1,83 +1,111 @@
-<!-- npm install --workspace apps/server typescript --save-dev -->
+# 🚀 Scalable WebSocket Chat Application
 
-# Turborepo starter
+A high-performance, real-time chat application showcasing scalable WebSocket architecture using Redis Pub/Sub, Kafka, and PostgreSQL. Built with modern technologies and Docker for seamless deployment.
 
-This is an official starter Turborepo.
+## 🌟 Features
 
-## Using this example
+- Real-time bidirectional communication using WebSockets
+- Horizontally scalable architecture with Redis Pub/Sub
+- Message persistence with PostgreSQL
+- Reliable message delivery using Kafka
+- Containerized setup with Docker
+- Modern ORM integration with Prisma
 
-Run the following command:
+## 🏗 Architecture
 
-```sh
-npx create-turbo@latest
+The application follows a microservices architecture with these key components:
+
+- **WebSocket Server**: Handles real-time client connections
+- **Redis Pub/Sub**: Enables cross-instance message broadcasting
+- **Kafka**: Manages asynchronous message delivery
+- **PostgreSQL**: Provides persistent message storage
+
+## 🛠 Technologies Used
+
+- **Node.js** - JavaScript runtime
+- **WebSocket** - Full-duplex communication protocol
+- **Redis** - In-memory data structure store
+- **Apache Kafka** - Distributed messaging system
+- **PostgreSQL** - Relational database
+- **Docker** - Containerization platform
+- **Prisma** - Modern database ORM
+
+## 📋 Prerequisites
+
+Ensure you have the following installed:
+
+- Node.js (v14.x or higher)
+- Docker
+- Docker Compose
+
+## 🚀 Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/dinesh-gaire/Scalable-WebSocket.git
+cd Scalable-WebSocket
 ```
 
-## What's inside?
+### Set Up Components
 
-This Turborepo includes the following packages/apps:
+1. **WebSocket Server**
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-### Apps and Packages
+2. **Redis**
+   ```bash
+   docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+   ```
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+3. **PostgreSQL**
+   ```bash
+   docker compose up -d
+   ```
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+4. **Kafka**
+   - Start Zookeper Container and expose PORT 2181.
+   - Start Kafka Container, expose PORT 9092 and setup ENV variables.
+   ```bash
+   docker run -p 2181:2181 zookeeper
+   
+   docker run -p 9092:9092 \
+   -e KAFKA_ZOOKEEPER_CONNECT=<PRIVATE_IP>:2181 \
+   -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<PRIVATE_IP>:9092 \
+   -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+   confluentinc/cp-kafka
+   ```
 
-### Utilities
+## ⚙️ Configuration
 
-This Turborepo has some additional tools already setup for you:
+Create a `.env` file in the project root:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```env
+DATABASE_URL="postgresql://postgres:chatdb@localhost:5432/chatdb?schema=public"
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 🧪 Testing
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+1. Open multiple browser windows
+2. Connect to the WebSocket server
+3. Send messages to verify real-time communication
+4. Check PostgreSQL for message persistence
+5. Monitor Kafka consumers for message delivery
 
-```
-npx turbo link
-```
+## 🔍 Implementation Details
 
-## Useful Links
+The application is split into two main parts:
 
-Learn more about the power of Turborepo:
+1. **Basic Chat Implementation**
+   - WebSocket server setup
+   - Redis Pub/Sub integration
+   - Real-time message broadcasting
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+2. **Enhanced Features**
+   - Kafka message queue integration
+   - PostgreSQL message persistence
+   - Scalability improvements
+  
+---
